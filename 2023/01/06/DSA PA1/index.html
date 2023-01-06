@@ -96,7 +96,7 @@
 	            <a href="#s1">分类</a>
 	                    <ul class="submenu">
 	                        <li>
-	                        
+	                        <a class="category-link" href="/categories/%E8%AF%BE%E7%A8%8B%E6%8A%A5%E5%91%8A/">课程报告</a>
 	                    </ul>
 	        </li>
 	        
@@ -104,6 +104,18 @@
 	        
 	        
 		        <!-- Pages 自定义   -->
+		        
+		        <li>
+		            <a href="/about/" title="介绍">
+		                介绍
+		            </a>
+		        </li>
+		        
+		        <li>
+		            <a href="/tag/" title="标签">
+		                标签
+		            </a>
+		        </li>
 		        
 
 
@@ -121,24 +133,24 @@
 </nav>
 
         <div id="main" >
-            <div class ="post_page_title_img" style="height: 25rem;background-image: url();background-position: center; background-repeat:no-repeat; background-size:cover;-moz-background-size:cover;overflow:hidden;" >
-                <a href="#" style="padding: 4rem 4rem 2rem 4rem ;"><h2 >Hello World</h2></a>
+            <div class ="post_page_title_img" style="height: 25rem;background-image: url(https://s2.loli.net/2023/01/06/fjNVg5bFkLCHqDM.png);background-position: center; background-repeat:no-repeat; background-size:cover;-moz-background-size:cover;overflow:hidden;" >
+                <a href="#" style="padding: 4rem 4rem 2rem 4rem ;"><h2 >DSA PA1 Report</h2></a>
             </div>
             <!-- Post -->
             <div class="typo" style="padding: 3rem;">
-                <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+                <h1 id="PA1-1-A-B-Problem解题报告"><a href="#PA1-1-A-B-Problem解题报告" class="headerlink" title="PA1-1 A*B Problem解题报告"></a>PA1-1 A*B Problem解题报告</h1><ul>
+<li><p><strong>算法构思与实现要点</strong>：模拟竖式乘法计算高精度乘法，首先用char数组读取输入数据，然后将输入数字按“10^9进制”（每9位十进制数为一组，这样两个数字相乘仍然不超过long long最大正整数范围，能最大程度减少循环次数，从常数上优化算法效率）逆序存入long long数组，按10^9进制模拟竖式乘法计算并将结果存入ans数组中，然后逆序输出（除最高位外中间位均右对齐补0）</p>
+</li>
+<li><p><strong>完成过程中遇到的问题与解决过程</strong>：</p>
+<ol>
+<li>一开始使用的是最朴素的十进制竖式乘法模拟，即数组中的每一位只存储0-9的数字，这样由于两个数字相乘的计算量与两个数字位数的积成正比，进行500次5000位 * 5000位（十进制）数的乘法大约要进行500 * 5000 * 5000 &#x3D; 1.25 * 10^10次计算，超出可接受范围，最终在五成测中获得40分（TLE)</li>
+<li>为了最大程度利用内置乘法减少循环次数，只要在long long数据范围内（约10^20以下）的乘法都可以直接计算，因此想到按组拆分原数据，按“ 10^9进制 ”进行存储和计算，这样总计算量大约降为500 * 5000&#x2F;9 * 5000&#x2F;9 &#x3D; 2 * 10^8量级，为1s内可以接受的级别，并且由于以10的次方为基底，方便输出，也不用修改原程序的竖式乘法逻辑</li>
+<li>在修改过程中遇到了一个输出格式问题，即输出的乘法结果除了最高那9位数字以外，其他每9位在输出时都要右对齐补0为一个9位数，这一bug是通过对拍程序检查输出结果找出来的</li>
+</ol>
+</li>
+<li><p><strong>复杂度估算</strong>：设总共完成m次乘法计算，每次两个因子的十进制位数分别为n1和n2（量级相同，统称为n），则渐进时间复杂度为$O(m * n^2)$，考虑在常数意义下的优化，优化后的算法时间复杂度具体而言约为$O(m * \frac{n1}{9} * \frac{n2}{9})$；采用三个long long数组存储因子和答案完成模拟竖式计算，数组长度与因子的十进制位数成正比，渐进空间复杂度为$O(n)$，具体而言约为$O(\frac{n1}{9} + \frac{n2}{9} + \frac{n1+n2}{9})$</p>
+</li>
+</ul>
 
             </div>
 
@@ -201,8 +213,8 @@ $('.btn_click_load').click(function() {
 -->
 <script type="text/javascript">
     var disqus_config = function () {
-        this.page.url = 'http://example.com/2023/01/06/hello-world/';  // Replace PAGE_URL with your page's canonical URL variable
-        this.page.identifier = 'http://example.com/2023/01/06/hello-world/'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        this.page.url = 'http://example.com/2023/01/06/DSA%20PA1/';  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = 'http://example.com/2023/01/06/DSA%20PA1/'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
     };
 </script>
 
