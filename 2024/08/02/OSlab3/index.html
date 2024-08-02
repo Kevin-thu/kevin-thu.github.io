@@ -140,27 +140,19 @@
 
         <div id="main" >
             <div class ="post_page_title_img" style="height: 25rem;background-image: url(https://camo.githubusercontent.com/5328289e059ee1788dc66b675b1c68c4f74ed2f5a83f907869b30a336498b003/68747470733a2f2f6564752d696d6167652e6e6f73646e2e3132372e6e65742f32464246323634334531313533413943374345413946354430423043443344362e6a70673f696d61676556696577267468756d626e61696c3d34323679323430267175616c6974793d313030);background-position: center; background-repeat:no-repeat; background-size:cover;-moz-background-size:cover;overflow:hidden;" >
-                <a href="#" style="padding: 4rem 4rem 2rem 4rem ;"><h2 >OS Lab4 &amp; Lab5 Report</h2></a>
+                <a href="#" style="padding: 4rem 4rem 2rem 4rem ;"><h2 >OS Lab3 Report</h2></a>
             </div>
             <!-- Post -->
             <div class="typo" style="padding: 3rem;">
-                <h1 id="OS-Lab4-实验报告"><a href="#OS-Lab4-实验报告" class="headerlink" title="OS Lab4 实验报告"></a>OS Lab4 实验报告</h1><h2 id="实现功能"><a href="#实现功能" class="headerlink" title="实现功能"></a>实现功能</h2><p>本次实验中，为了支持带参数的 spawn 调用，我首先参考 sys_exec 的实现，更新了 sys_spawn 的实现。然后实现了 sys_linkat、sys_unlinkat、sys_fstat 三个系统调用，分别完成创建硬链接、取消硬链接和查询文件状态功能，为此，在 inode 和 dinode 数据结构中增加了链接计数 nlink，并实现 sys_unlinkat 增加了 dirunlink 函数，用于删除根目录数据块中记录的指定文件名到 inode number 的映射。</p>
-<h2 id="问答题"><a href="#问答题" class="headerlink" title="问答题"></a>问答题</h2><h3 id="Chapter-6"><a href="#Chapter-6" class="headerlink" title="Chapter 6"></a>Chapter 6</h3><ol>
-<li>我们的文件系统中只有根目录一级目录，root inode 的数据块起到存储所有文件名到 inode number 映射关系的作用，如果 root inode 中的内容损坏，可能出现无法正确根据文件名查到对应文件，甚至无法创建文件。</li>
+                <h1 id="OS-Lab3-实验报告"><a href="#OS-Lab3-实验报告" class="headerlink" title="OS Lab3 实验报告"></a>OS Lab3 实验报告</h1><h2 id="实现功能"><a href="#实现功能" class="headerlink" title="实现功能"></a>实现功能</h2><p>本次实验我首先在 sys_mmap 中加入了对 p-&gt;max_page 的更新维护；然后增加了 sys_spawn 系统调用，调用 allocproc 创建子进程，并调用 loader 加载目标程序，将子进程加入任务队列中，返回子进程 PID；最后在进程调度中引入 stride 调度算法，为进程增加 prio 和 stride 两个字段，在调度任务 pop_queue 时扫描得到 stride 最小的任务弹出执行并更新 stride。</p>
+<h2 id="问答题"><a href="#问答题" class="headerlink" title="问答题"></a>问答题</h2><ol>
+<li>不是，因为 250 + 10 &#x3D; 260 &gt; 255 溢出了 8bit 无符号整数的最大表示值 255，实际存储的值为 260 - 256 &#x3D; 4，由于 4 &lt; 255，导致下一次被调度的又是 p2；</li>
+<li>可用归纳法证明。在题设条件下，进程每次 <code>pass &lt;= BIG_STRIDE / 2</code>。<br>初始各进程 stride 相同，均为 0，经过第 1 次调度后：<code>STRIDE_MAX(1) – STRIDE_MIN(1) = pass(1) - 0 &lt;= BIG_STRIDE / 2</code>；<br>设经过第 k 次调度后满足 <code>STRIDE_MAX(k) – STRIDE_MIN(k) &lt;= BIG_STRIDE / 2</code>，第 k + 1 次调度时会选择 <code>STRIDE_MIN(k)</code> 的进程执行，<code>STRIDE_MIN(k) + pass(k) &lt;= STRIDE_MIN(k) + BIG_STRIDE / 2</code>，新的 <code>STRIDE_MIN(k+1) &gt; STRIDE_MIN(k)</code>，<code>STRIDE_MAX(k+1) = max&#123;STRIDE_MAX(k), STRIDE_MIN(k) + pass(k)&#125;</code>，有：<ol>
+<li>若 <code>STRIDE_MAX(k) &gt;= STRIDE_MIN(k) + pass(k)</code>，则 <code>STRIDE_MAX(k+1) - STRIDE_MIN(k+1) = STRIDE_MAX(k) - STRIDE_MIN(k+1) &lt; STRIDE_MAX(k) – STRIDE_MIN(k) &lt;= BIG_STRIDE / 2</code>；</li>
+<li>若 <code>STRIDE_MIN(k) + pass(k) &gt; STRIDE_MAX(k)</code>，则 <code>STRIDE_MAX(k+1) - STRIDE_MIN(k+1) = STRIDE_MIN(k) + pass(k) - STRIDE_MIN(k+1) &lt;= STRIDE_MIN(k) + BIG_STRIDE / 2 – STRIDE_MIN(k) = BIG_STRIDE / 2</code>；<br> 由归纳法命题得证。</li>
 </ol>
-<h3 id="Chapter-7"><a href="#Chapter-7" class="headerlink" title="Chapter 7"></a>Chapter 7</h3><ol>
-<li>例如，查看当前目录下文件数量（不包括目录）可以使用命令：<code>ls -l | grep &#39;^-&#39; | wc -l</code>，三个命令的作用分别为：<ul>
-<li><code>ls -l</code>：长列表输出该目录下文件信息(注意这里的文件是指目录、链接、设备文件等)，每一行对应一个文件或目录；</li>
-<li><code>grep &#39;^-&#39;</code>：过滤ls的输出信息，只保留一般文件，只保留目录是 grep ‘^d’；</li>
-<li><code>wc -l</code>：统计输出信息的行数，统计结果就是输出信息的行数，一行信息对应一个文件，所以就是文件的个数。</li>
-</ul>
 </li>
-<li>可以使用共享内存机制，在多个进程间建立共享内存，通过对共享内存的读写实现进程间通信。也可以使用邮箱机制，每个进程维护一个“邮箱”用于收发数据包，使用环形 buffer 存储，根据 pid 查找邮箱，通过向邮箱写入数据包向相应进程发消息，进程定期读邮箱接收消息。</li>
-</ol>
-<h1 id="OS-Lab5-实验报告"><a href="#OS-Lab5-实验报告" class="headerlink" title="OS Lab5 实验报告"></a>OS Lab5 实验报告</h1><h2 id="实现功能-1"><a href="#实现功能-1" class="headerlink" title="实现功能"></a>实现功能</h2><p>本次实验中，我实现了死锁检测算法 <code>deadlock_detect</code>，支持进程在获取互斥锁前或信号量P操作前进行死锁检测，避免出现死锁，同时实现系统调用 <code>sys_enable_deadlock_detect</code> 支持进程打开或关闭死锁检测。</p>
-<h2 id="问答题-1"><a href="#问答题-1" class="headerlink" title="问答题"></a>问答题</h2><ol>
-<li>(1) 需要回收的进程资源包括所有已分配且尚未退出的子线程、页表、打开的文件、互斥锁、信号量和条件变量等，其中回收的线程资源包括线程的用户栈、Trapframe、用于上下文切换的context等。<br>(2) 可能在任务队列中，也可能在信号量、互斥量、条件变量的等待队列中。由于进程退出时会回收所有子线程资源并将线程状态设为 <code>T_UNUSED</code>，信号量、互斥量、条件变量等资源也会被回收，这些线程都不需要再做手动回收。</li>
-<li>前者在调用 unlock 时会直接将互斥锁的 locked 置为 0，后者会等到该互斥锁的等待队列清空后才将 locked 状态置 0。后者相当于每次从队列中 pop 出一个线程后直接将互斥锁交给该线程，保证从该线程阻塞的地方继续执行；前者在 pop 出的线程进入任务队列后仍需要与其他就绪线程竞争互斥锁，有可能会被优先级更高的线程优先抢占导致 pop 出的线程的执行再次被阻塞。</li>
+<li>如下，如果两者差值超过 BIG_STRIDE &#x2F; 2 说明发生了溢出，要将直接比较的结果取反。  <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="type">unsigned</span> <span class="type">long</span> <span class="type">long</span> Stride_t;</span><br><span class="line"><span class="type">const</span> Stride_t BIG_STRIDE = <span class="number">0xffffffffffffffff</span>ULL;</span><br><span class="line"><span class="type">int</span> <span class="title function_">cmp</span><span class="params">(Stride_t a, Stride_t b)</span> &#123;</span><br><span class="line">    <span class="comment">// YOUR CODE HERE</span></span><br><span class="line">    <span class="comment">// return 1 if a &gt; b</span></span><br><span class="line">    <span class="comment">// return -1 if a &lt; b</span></span><br><span class="line">    <span class="comment">// return 0 if a == b</span></span><br><span class="line">    <span class="keyword">if</span> (a == b) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(((a &gt; b) &amp;&amp; (a - b &lt;= BIG_STRIDE / <span class="number">2</span>))</span><br><span class="line">            || (a &lt; b) &amp;&amp; (b - a &gt; BIG_STRIDE / <span class="number">2</span>))</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
 </ol>
 
             </div>
@@ -224,8 +216,8 @@ $('.btn_click_load').click(function() {
 -->
 <script type="text/javascript">
     var disqus_config = function () {
-        this.page.url = 'http://example.com/20248/02/01/OSlab4&amp;5/';  // Replace PAGE_URL with your page's canonical URL variable
-        this.page.identifier = 'http://example.com/20248/02/01/OSlab4&amp;5/'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        this.page.url = 'http://example.com/2024/08/02/OSlab3/';  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = 'http://example.com/2024/08/02/OSlab3/'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
     };
 </script>
 
