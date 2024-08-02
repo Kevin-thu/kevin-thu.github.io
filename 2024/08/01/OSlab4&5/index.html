@@ -140,42 +140,27 @@
 
         <div id="main" >
             <div class ="post_page_title_img" style="height: 25rem;background-image: url(https://camo.githubusercontent.com/5328289e059ee1788dc66b675b1c68c4f74ed2f5a83f907869b30a336498b003/68747470733a2f2f6564752d696d6167652e6e6f73646e2e3132372e6e65742f32464246323634334531313533413943374345413946354430423043443344362e6a70673f696d61676556696577267468756d626e61696c3d34323679323430267175616c6974793d313030);background-position: center; background-repeat:no-repeat; background-size:cover;-moz-background-size:cover;overflow:hidden;" >
-                <a href="#" style="padding: 4rem 4rem 2rem 4rem ;"><h2 >OS Lab2 Report</h2></a>
+                <a href="#" style="padding: 4rem 4rem 2rem 4rem ;"><h2 >OS Lab4 &amp; Lab5 Report</h2></a>
             </div>
             <!-- Post -->
             <div class="typo" style="padding: 3rem;">
-                <h1 id="OS-Lab2-实验报告"><a href="#OS-Lab2-实验报告" class="headerlink" title="OS Lab2 实验报告"></a>OS Lab2 实验报告</h1><h2 id="实现功能"><a href="#实现功能" class="headerlink" title="实现功能"></a>实现功能</h2><p>首先重新实现 <code>sys_gettimeofday</code> 和 <code>sys_task_info</code>，用户传的指针是用户页表中的虚拟地址，内核使用 <code>copyout</code> 接口向用户给定虚拟地址写入数据。</p>
-<p>然后在 <code>syscall.c</code> 中增加了 <code>sys_mmap</code> 和 <code>sys_munmap</code> 两个系统调用，<code>sys_mmap</code> 的核心是调用 <code>kalloc</code> 申请匿名物理内存并使用 <code>mappages</code> 映射到由 <code>start</code> 开始的某一段虚存，<code>sys_munmap</code> 中核心则是调用 <code>uvmunmap</code> 取消虚存映射。</p>
-<h2 id="问答题"><a href="#问答题" class="headerlink" title="问答题"></a>问答题</h2><h3 id="第-1-题：SV39-页表项"><a href="#第-1-题：SV39-页表项" class="headerlink" title="第 1 题：SV39 页表项"></a>第 1 题：SV39 页表项</h3><p>SV39 页表项组成如下所示：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"> 63      54 53                             10 9   8 7 6 5 4 3 2 1 0</span><br><span class="line">+----------+--------------------------------+-----+-+-+-+-+-+-+-+-+</span><br><span class="line">| reserved |              PPN               | RSW |D|A|G|U|X|W|R|V|</span><br><span class="line">+----------+--------------------------------+-----+-+-+-+-+-+-+-+-+</span><br><span class="line">     10                    44                  2   1 1 1 1 1 1 1 1</span><br></pre></td></tr></table></figure>
-<p>最高 10 位为保留位，中间 44 位为物理页号 PPN（非叶子节点即指向下一级页表起始位置的物理页号），最低 10 位为标志位。标志位有以下作用：</p>
-<ul>
-<li>V：有效位，表示页表项是否有效。</li>
-<li>R, W, X：对叶节点页表项，这些位分别表示页面是否可读、可写和可执行；对非叶节点页表项，三个位均为 0（且 V 位为 1）表示是合法页目录表项，指向页面表的下一级。</li>
-<li>U：用户位，表示对应虚拟页面是否可在用户态下访问。</li>
-<li>G：全局位，表示对应的页面是否是全局的，若是全局的在进程切换时不必刷新该页的 TLB 缓存。对于非叶结点页表项，全局设置意味着页表后续级别中的所有映射都是全局的。</li>
-<li>A：访问位，表示对应的页面是否被访问过，为页面置换算法提供信息。</li>
-<li>D：脏位，表示对应的页面是否被修改过，若修改过换出内存页时需要写回磁盘。</li>
-<li>RSW：为内核程序预留，硬件不会对此做任何其他操作。</li>
-</ul>
-<h3 id="第-2-题：缺页"><a href="#第-2-题：缺页" class="headerlink" title="第 2 题：缺页"></a>第 2 题：缺页</h3><ol>
-<li>请问哪些异常可能是缺页导致的？<br>常见因缺页引起异常的场景包括：<ul>
-<li>地址空间映射关系未建立：用户进程访问未经物理内存映射（未向操作系统申请）的虚拟地址；或申请的虚拟地址尚未分配实际的物理页面（lazy策略），在首次访问时会触发缺页异常；</li>
-<li>地址空间映射关系已建立，但访问的页面被交换（swap）到磁盘，不在内存中；</li>
-<li>访问的地址空间不合法（如用户态访问内核地址空间），或访问页面的执行权限不够（如修改只读页面）。</li>
+                <h1 id="OS-Lab4-实验报告"><a href="#OS-Lab4-实验报告" class="headerlink" title="OS Lab4 实验报告"></a>OS Lab4 实验报告</h1><h2 id="实现功能"><a href="#实现功能" class="headerlink" title="实现功能"></a>实现功能</h2><p>本次实验中，为了支持带参数的 spawn 调用，我首先参考 sys_exec 的实现，更新了 sys_spawn 的实现。然后实现了 sys_linkat、sys_unlinkat、sys_fstat 三个系统调用，分别完成创建硬链接、取消硬链接和查询文件状态功能，为此，在 inode 和 dinode 数据结构中增加了链接计数 nlink，并实现 sys_unlinkat 增加了 dirunlink 函数，用于删除根目录数据块中记录的指定文件名到 inode number 的映射。</p>
+<h2 id="问答题"><a href="#问答题" class="headerlink" title="问答题"></a>问答题</h2><h3 id="Chapter-6"><a href="#Chapter-6" class="headerlink" title="Chapter 6"></a>Chapter 6</h3><ol>
+<li>我们的文件系统中只有根目录一级目录，root inode 的数据块起到存储所有文件名到 inode number 映射关系的作用，如果 root inode 中的内容损坏，可能出现无法正确根据文件名查到对应文件，甚至无法创建文件。</li>
+</ol>
+<h3 id="Chapter-7"><a href="#Chapter-7" class="headerlink" title="Chapter 7"></a>Chapter 7</h3><ol>
+<li>例如，查看当前目录下文件数量（不包括目录）可以使用命令：<code>ls -l | grep &#39;^-&#39; | wc -l</code>，三个命令的作用分别为：<ul>
+<li><code>ls -l</code>：长列表输出该目录下文件信息(注意这里的文件是指目录、链接、设备文件等)，每一行对应一个文件或目录；</li>
+<li><code>grep &#39;^-&#39;</code>：过滤ls的输出信息，只保留一般文件，只保留目录是 grep ‘^d’；</li>
+<li><code>wc -l</code>：统计输出信息的行数，统计结果就是输出信息的行数，一行信息对应一个文件，所以就是文件的个数。</li>
 </ul>
 </li>
-<li>发生缺页时，描述相关的重要寄存器的值。<br><code>sscratch</code> 中是发生缺页进程的 trapframe 地址，<code>satp</code> 中是发生缺页进程的页表根地址，<code>sepc</code> 中是发生缺页异常的指令地址，<code>mcause</code> 中 Interrupt 位是 0（表示异常），Exception Code 是 12、13 或 15。</li>
-<li>Lazy 策略有哪些好处？<br>有助于节省物理空间，减少不必要的页表操作。</li>
-<li>请问处理 10G 连续的内存页面，需要操作的页表实际大致占用多少内存(给出数量级即可)？<br>一个叶子节点页表项可映射 4KB 物理内存，一个物理页面包含 512 个页表项，可映射 2MB 内存，则处理 10G 连续页面需要三级页表 10G &#x2F; 2M &#x3D; 5K 个；这 5K 个连续三级页表对应二级页表个数大约为 5K &#x2F; 512 &#x3D; 10 &lt;&lt; 5K，故在数量级上可忽略一级二级页表占用的内存。由此估计，所需的页表大致内存为 5K * 4KB &#x3D; 20MB。</li>
-<li>请简单思考如何才能在现有框架基础上实现 Lazy 策略，缺页时又如何处理？描述合理即可，不需要考虑实现。<br>为每个用户进程分配一张表，记录其申请的虚拟内存地址，在申请时仅在表上记录，暂时不映射到真实物理内存；当发生缺页时，首先查找该表判断是否访问的地址是否已经申请过，若已经申请过则将该地址从表上移出，并分配一段与访问空间大小相应的物理内存，修改页表建立映射，然后返回缺页异常的指令继续执行。</li>
-<li>内存页面可能被换到磁盘上了，导致对应页面失效。此时页面失效如何表现在页表项(PTE)上？<br>对应叶子节点 PTE 的 V 位（有效位）为 0，但 R&#x2F;W&#x2F;X 位不全为 0。</li>
+<li>可以使用共享内存机制，在多个进程间建立共享内存，通过对共享内存的读写实现进程间通信。也可以使用邮箱机制，每个进程维护一个“邮箱”用于收发数据包，使用环形 buffer 存储，根据 pid 查找邮箱，通过向邮箱写入数据包向相应进程发消息，进程定期读邮箱接收消息。</li>
 </ol>
-<h3 id="第-3-题：单页表和双页表"><a href="#第-3-题：单页表和双页表" class="headerlink" title="第 3 题：单页表和双页表"></a>第 3 题：单页表和双页表</h3><ol>
-<li>单页表情况下，如何更换页表？<br>同样通过 <code>csrw</code> 修改 <code>satp</code> 寄存器，并使用 <code>sfence.vma zero, zero</code> 刷新 TLB 实现更换。</li>
-<li>单页表情况下，如何控制用户态无法访问内核页面？<br>将内核页面对应的页表项 U 位置 0。</li>
-<li>单页表有何优势？<br>只需在进程切换时更换页表、刷新 TLB，在同一进程的用户态和内核态之间切换时（如异常处理、系统调用）不用更换页表和刷新 TLB，减少时间开销，提升程序效率。</li>
-<li>双页表实现下，何时需要更换页表？假设你写一个单页表操作系统，你会选择何时更换页表？<br>进程切换和用户态、内核态之间的切换都要更换页表。可以选择在进程调度时更换页表。</li>
+<h1 id="OS-Lab5-实验报告"><a href="#OS-Lab5-实验报告" class="headerlink" title="OS Lab5 实验报告"></a>OS Lab5 实验报告</h1><h2 id="实现功能-1"><a href="#实现功能-1" class="headerlink" title="实现功能"></a>实现功能</h2><p>本次实验中，我实现了死锁检测算法 <code>deadlock_detect</code>，支持进程在获取互斥锁前或信号量P操作前进行死锁检测，避免出现死锁，同时实现系统调用 <code>sys_enable_deadlock_detect</code> 支持进程打开或关闭死锁检测。</p>
+<h2 id="问答题-1"><a href="#问答题-1" class="headerlink" title="问答题"></a>问答题</h2><ol>
+<li>(1) 需要回收的进程资源包括所有已分配且尚未退出的子线程、页表、打开的文件、互斥锁、信号量和条件变量等，其中回收的线程资源包括线程的用户栈、Trapframe、用于上下文切换的context等。<br>(2) 可能在任务队列中，也可能在信号量、互斥量、条件变量的等待队列中。由于进程退出时会回收所有子线程资源并将线程状态设为 <code>T_UNUSED</code>，信号量、互斥量、条件变量等资源也会被回收，这些线程都不需要再做手动回收。</li>
+<li>前者在调用 unlock 时会直接将互斥锁的 locked 置为 0，后者会等到该互斥锁的等待队列清空后才将 locked 状态置 0。后者相当于每次从队列中 pop 出一个线程后直接将互斥锁交给该线程，保证从该线程阻塞的地方继续执行；前者在 pop 出的线程进入任务队列后仍需要与其他就绪线程竞争互斥锁，有可能会被优先级更高的线程优先抢占导致 pop 出的线程的执行再次被阻塞。</li>
 </ol>
 
             </div>
@@ -239,8 +224,8 @@ $('.btn_click_load').click(function() {
 -->
 <script type="text/javascript">
     var disqus_config = function () {
-        this.page.url = 'http://example.com/2024/08/02/OSlab2/';  // Replace PAGE_URL with your page's canonical URL variable
-        this.page.identifier = 'http://example.com/2024/08/02/OSlab2/'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        this.page.url = 'http://example.com/2024/08/01/OSlab4&amp;5/';  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = 'http://example.com/2024/08/01/OSlab4&amp;5/'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
     };
 </script>
 
